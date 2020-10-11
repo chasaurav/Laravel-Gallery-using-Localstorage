@@ -9,114 +9,15 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
-    <style>
-        ul {
-            margin: 0;
-            padding: 0;
-        }
-        li {
-            list-style: none;
-        }
-        .user-wrapper, .message-wrapper{
-            border: 1px solid #dddddd;
-            overflow-y: auto;
-        }
-        .user-wrapper{
-            height: 600px;
-        }
-        .user{
-            cursor: pointer;
-            padding: 5px 0;
-            position: relative;
-        }
-        .user:hover{
-            background: #eee;
-        }
-        .user:last-child {
-            margin-bottom: 0;
-        }
-        .pending {
-            position: absolute;
-            left: 13px;
-            top: 9px;
-            background: #b600ff;
-            margin: 0;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            line-height: 18px;
-            padding-left: 5px;
-            color: #fff;
-            font-size: 12px;
-        }
-        .media-left {
-            margin: 0 10px;
-        }
-        .media-left img {
-            width: 64px;
-            border-radius: 64px;
-        }
-        .media-body p {
-            margin: 6px 0;
-        }
-        .message-wrapper{
-            padding: 10px;
-            height: 536px;
-            background: #eee;
-        }
-        .messages .message {
-            margin-bottom: 15px;
-        }
-        .messages .message:last-child {
-            margin-bottom: 0px;
-        }
-        .received, .sent{
-            width: 45%;
-            padding: 3px 10px;
-            border-radius: 10px;
-        }
-        .received{
-            background: #fff;
-        }
-        .sent{
-            background: #3bebff;
-            float: right;
-            text-align: right;
-        }
-        .message p {
-            margin: 5px 0;
-        }
-        .date{
-            color: #777;
-            font-size: 12px;
-        }
-        .active{
-            background: #eee;
-        }
-        input[type=text] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 15px 0 0 0;
-            display: inline-block;
-            border-radius: 4px;
-            box-sizing: border-box;
-            outline: none;
-            border: 1px solid #ccc;
-        }
-        input[type=text]:focus {
-            border: 1px solid #aaa;
-        }
-    </style>
+    <link href="{{ asset('css/owl.carousel.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/owl.theme.default.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/custStyle.css') }}" rel="stylesheet">
 </head>
 <body>
     <div id="app">
@@ -131,9 +32,7 @@
 
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
-                    <ul class="navbar-nav mr-auto">
-
-                    </ul>
+                    <ul class="navbar-nav mr-auto"></ul>
 
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ml-auto">
@@ -148,22 +47,12 @@
                                 </li>
                             @endif
                         @else
-                            <li class="nav-item dropdown">
-                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
-                                    {{ Auth::user()->name }} <span class="caret"></span>
+                            <li class="nav-item">
+                                <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"> {{ __('Logout') }} from {{ Auth::user()->name }}
                                 </a>
-
-                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
-                                        {{ __('Logout') }}
-                                    </a>
-
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                                        @csrf
-                                    </form>
-                                </div>
+                                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                                    @csrf
+                                </form>
                             </li>
                         @endguest
                     </ul>
@@ -175,94 +64,10 @@
             @yield('content')
         </main>
     </div>
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-    <script src="js/jquery.min.js" charset="utf-8"></script>
-
-    <script charset="utf-8">
-        var receiver_id = "";
-        var my_id = "{{ Auth::id() }}";
-
-        $(document).ready(function(){
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-
-            // Enable pusher logging - don't include this in production
-            Pusher.logToConsole = true;
-            var pusher = new Pusher('17508a0f14ce18e2c367', { cluster: 'ap2' });
-            var channel = pusher.subscribe('my-channel');
-            channel.bind('my-event', function(data){
-                // alert(JSON.stringify(data));
-                if (my_id == data.from) {
-                    $(`#${data.to}`).click();
-                }else if (my_id == data.to) {
-                    if (receiver_id == data.from) {
-                        // if receiver is selected reload the selected user
-                        $(`#${data.from}`).click();
-                    }else{
-                        // if receiver is not selected, add notification for that user
-                        var pending = parseInt($(`#${data.from}`).find('.pending').text());
-
-                        if (pending) {
-                            $(`#${data.from}`).find('.pending').text(pending + 1);
-                        }else{
-                            $(`#${data.from}`).append(`<span class="pending">1</span>`);
-                        }
-                    }
-                }
-            });
-
-            $('.user').on('click', function(){
-                $('.user').removeClass('active');
-                $(this).addClass('active');
-                $(this).find('.pending').remove();
-
-                receiver_id = $(this).attr('id');
-                $.ajax({
-                    type: 'get',
-                    url: 'message/' + receiver_id,
-                    data: "",
-                    cache: false,
-                    success: function(data) {
-                        $('#messages').html(data);
-                        scrollToBottom();
-                    }
-                });
-            });
-
-            $(document).on('keyup', '.input-text input', function(e){
-                var message = $(this).val();
-
-                if (e.keyCode == 13 && message != '' && receiver_id != ''){
-                    let that = $(this);
-                    that.val('');
-
-                    var datastr = `receiver_id=${receiver_id}&message=${message}`;
-                    $.ajax({
-                        type: 'POST',
-                        url: 'message',
-                        data: datastr,
-                        cache: false,
-                        success: function(data) {
-                        },
-                        error: function(jqXHR, status, err) {
-                        },
-                        complete: function() {
-                            scrollToBottom();
-                        }
-                    });
-                }
-            });
-        });
-
-        // Scroll down to the recent message
-        const scrollToBottom = () => {
-            $('.message-wrapper').animate({
-                scrollTop: $('.message-wrapper').get(0).scrollHeight
-            }, 50);
-        }
-    </script>
+    <!-- Scripts -->
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/custJS.js') }}"></script>
+    {{-- <script src="{{ asset('js/app.js') }}" defer></script> --}}
 </body>
 </html>

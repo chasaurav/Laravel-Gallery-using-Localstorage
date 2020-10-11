@@ -1,0 +1,74 @@
+body{
+			font-family: Tahoma;
+		}
+		.hoverMenu{
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			background: #0000007a;
+			cursor: grab;
+		}
+		.custButton{
+			background: transparent;
+			border: 3px solid #fff;
+			outline: none;
+			padding: 15px;
+			border-radius: 10px;
+			color: #fff;
+			font-weight: 600;
+			cursor: pointer;
+		}
+		.custButton:hover{
+			background: #fff;
+			color: red;
+			border-color: red;
+			transition: .5s ease all;
+		}
+		.custCloseButton{
+			background: transparent;
+			border: 3px solid #fff;
+			outline: none;
+			padding: 15px;
+			border-radius: 10px;
+			color: #fff;
+			font-weight: 600;
+			cursor: pointer;
+		}
+		.custCloseButton:hover{
+			background: #fff;
+			color: red;
+			border-color: red;
+			transition: .5s ease all;
+		}
+		.cust_modal {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100vh;
+			overflow: hidden;
+			background: #000000cf;
+			display: flex;
+			z-index: 9;
+			justify-content: center;
+			align-items: center;
+			flex-direction: column;
+		}
+		.alertMsg {
+			color: #fff;
+			font-size: 1.8rem;
+			font-weight: 600;
+		}
+		#fileInput {
+			border: 3px solid #fff;
+			padding: 16px;
+			border-radius: 16px;
+			width: 60%;
+			color: #fff;
+			font-size: 1rem;
+		}

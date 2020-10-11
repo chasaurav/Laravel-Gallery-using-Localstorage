@@ -3,27 +3,15 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
         <title>Laravel</title>
-
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,600" rel="stylesheet">
+        <link href="{{ asset('css/owl.carousel.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/owl.theme.default.min.css') }}" rel="stylesheet">
+        <link href="{{ asset('css/custStyle.css') }}" rel="stylesheet">
 
         <!-- Styles -->
         <style>
-            html, body {
-                background-color: #fff;
-                color: #636b6f;
-                font-family: 'Nunito', sans-serif;
-                font-weight: 200;
-                height: 100vh;
-                margin: 0;
-            }
-
-            .full-height {
-                height: 100vh;
-            }
-
             .flex-center {
                 align-items: center;
                 display: flex;
@@ -41,7 +29,7 @@
             }
 
             .content {
-                text-align: center;
+                margin: 20px;
             }
 
             .title {
@@ -56,10 +44,6 @@
                 letter-spacing: .1rem;
                 text-decoration: none;
                 text-transform: uppercase;
-            }
-
-            .m-b-md {
-                margin-bottom: 30px;
             }
         </style>
     </head>
@@ -78,22 +62,61 @@
                     @endauth
                 </div>
             @endif
-
-            <div class="content">
-                <div class="title m-b-md">
-                    Laravel
-                </div>
-
-                <div class="links">
-                    <a href="https://laravel.com/docs">Docs</a>
-                    <a href="https://laracasts.com">Laracasts</a>
-                    <a href="https://laravel-news.com">News</a>
-                    <a href="https://blog.laravel.com">Blog</a>
-                    <a href="https://nova.laravel.com">Nova</a>
-                    <a href="https://forge.laravel.com">Forge</a>
-                    <a href="https://github.com/laravel/laravel">GitHub</a>
-                </div>
-            </div>
         </div>
+        <div class="content">
+            <h1>Image Gallery with Laravel and Localstorage</h1>
+            <div class="owl-carousel owl-theme dumpImg"></div>
+        </div>
+        <script src="{{ asset('js/jquery.min.js') }}"></script>
+        <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+        <script>
+            let owlVar = $('.owl-carousel');
+            const owlConfig = {
+                items: 1,
+                nav: false,
+                dots: true,
+                margin: 10,
+                loop: true,
+                autoplay: true,
+                autoplayHoverPause: true,
+                autoplaySpeed: 200,
+                touchDrag: true,
+                mouseDrag: true,
+            };
+            let img = [];
+
+            // -Adding the images to the DOM
+            // ------------------------------
+            const addImageToDOM = () => {
+                const recentImgData = JSON.parse(localStorage.getItem('imageArr'));
+                let html = '';
+
+                // -Some Validations to check if the data is present
+                // -------------------------------------------------
+                if (!recentImgData) return false;
+                if (recentImgData.length == 0) {
+                    $('.item').remove();
+                    localStorage.removeItem('imageArr');
+                    img = [];
+                    return false;
+                }
+
+                // -Appending the images to the Carousel
+                // -------------------------------------
+                recentImgData.map(({imgName}, idx) => {
+                    html += `<div class="item">`;
+                    html += `<img src="${imgName}" alt="image_${idx}" data-idx="${idx}" class="imageItem" style="height: 80vh;">`;
+                    html += `</div>`;
+                    $('.dumpImg').html(html);
+                });
+
+                // -Re-INITing the carousel
+                // -------------------------
+                owlVar.owlCarousel('destroy');
+                owlVar.owlCarousel(owlConfig);
+            }
+
+            window.onload = () => addImageToDOM();
+        </script>
     </body>
 </html>
